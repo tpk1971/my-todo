@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../my-todo-data-entry/my-todo-data-entry.html">
+<link rel="import" href="../my-todo-list/my-todo-list.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<dom-module id="my-todo-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
+        <app-localstorage-document key="todo_storage" data="{{todos}}"></app-localstorage-document>
+        <my-todo-data-entry input-value="{{inputval}}" id="dataEntry"></my-todo-data-entry>
+
+        <my-todo-list todos="{{todos}}" id="dataList"></my-todo-list>
+
+    </template>
+
+    <script>
+        /**
+         * @customElement
+         * @polymer
+         */
+        class MyTodoApp extends Polymer.Element {
+            static get is() {
+                return 'my-todo-app';
+            }
+
+            static get properties() {
+                return {
+                    inputval: {
+                        type: String,
+
+                    },
+                    todos: {
+                        type: Array,
+                        notify: true,
+                        value: function(){
+                            return [ ]
+                                        }
+                    },
+
+                    received: {
+                        type: String,
+                        value: "Not Yet"
+                    }
+
+                };
+            }
+
+            ready() {
+
+                super.ready();
+
+                this.$.dataEntry.addEventListener("added", e => {
+
+                    this.addToDo(e.detail.todo);
+
+                });
+
+
+            }
+
+            addToDo(todo){
+
+                this.push('todos', todo);
+                this.notifyPath("todos");
+            }
+
+            deleteToDo(todo){
+
+                var index = this.todos.indexOf(todo);
+                this.splice('todos', index, 1);
+
+            }
+
+        }
+
+        window.customElements.define(MyTodoApp.is, MyTodoApp);
+
+
+    </script>
+</dom-module>

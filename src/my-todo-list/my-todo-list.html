@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../my-todo-item/my-todo-item.html">
+
+<dom-module id="my-todo-list">
+
+    <template>
+
+
+        <h2>In Progress</h2>
+        <ul>
+
+            <template is="dom-repeat" as="todo" items="{{todos}}" filter="_filter" observe="completed">
+                <my-todo-item todo="{{todo}}" data="{{todo.value}}" id="dataTodo"
+                              on-kick="_receiveEvent"></my-todo-item>
+            </template>
+
+        </ul>
+
+        <br>
+        <h2>Completed</h2>
+
+        <ul>
+
+            <template is="dom-repeat" as="todo" items="{{todos}}" filter="_filterCompleted" observe="completed">
+                    <my-todo-item todo="{{todo}}" data="{{todo.value}}" id="dataTodoCompleted" class="styleItem"
+                                  on-kick="_receiveEvent"></my-todo-item>
+            </template>
+
+        </ul>
+
+    </template>
+
+    <script>
+
+        class MyToDoList extends Polymer.Element {
+
+            static get is() {
+                return "my-todo-list"
+            }
+
+            static get properties() {
+
+                return {
+                    todos: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true,
+                        value: function () {
+                            return []
+                        }
+                    },
+
+
+                }
+
+            }
+
+            _filter(data) {
+
+                return !data.completed;
+
+            }
+
+            _filterCompleted(data) {
+
+                return data.completed;
+
+            }
+
+            ready() {
+
+                super.ready();
+
+            }
+
+            _doDelete(e) {
+                console.log("Got Delete");
+                const index = this.todos.indexOf(e.model.todo);
+                this.splice("todos", index, 1);
+
+            }
+
+            _receiveEvent(e) {
+
+                console.log("Got Delete from Child");
+                const index = this.todos.indexOf(e.model.todo);
+                this.splice("todos", index, 1);
+
+            }
+
+
+        }
+
+
+        window.customElements.define(MyToDoList.is, MyToDoList);
+
+
+    </script>
+
+
+</dom-module>

@@ -1,0 +1,111 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="my-todo-item">
+
+
+    <template>
+
+        <custom-style>
+            <style is="custom-style">
+                .flex-horizontal {
+                    @apply --layout-horizontal;
+                }
+
+                .flexchild {
+                    @apply --layout-flex;
+                }
+
+                .flexother {
+                    @apply --layout-horizontal;
+                    @apply --layout-center;
+                }
+
+                .flext {
+                    @apply --layout-vertical;
+                    @apply --layout-end;
+                }
+
+                .bottomAlign {
+                    margin-top: 12px;
+                }
+
+                li {
+                    list-style: none;
+                }
+
+            </style>
+        </custom-style>
+
+        <template is="dom-if" if="{{!editing}}">
+            <li>
+                <div class="container flex-horizontal">
+                    <div class="flexother">
+                        <paper-checkbox checked="{{todo.completed}}"></paper-checkbox>
+                    </div>
+                    <div class="flexchild bottomAlign">
+                        [[data]]
+                    </div>
+                    <div class="flexother">
+                        <paper-icon-button icon="create" slot="suffix" on-tap="_handleEdit"></paper-icon-button>
+                        <paper-icon-button icon="delete" slot="suffix" on-tap="_sendEvent"></paper-icon-button>
+                    </div>
+                </div>
+            </li>
+        </template>
+
+        <template is="dom-if" if="{{editing}}">
+            <div>
+                <paper-input label="New Todo" value="{{data}}">
+                    <iron-icon slot="prefix" icon="assignment"></iron-icon>
+                    <paper-icon-button icon="check" slot="suffix" on-tap="_handleSave"></paper-icon-button>
+                </paper-input>
+            </div>
+        </template>
+
+    </template>
+    <script>
+        class MyToDoItem extends Polymer.Element {
+
+            static get is() {
+                return "my-todo-item"
+            }
+
+            static get properties() {
+                return {
+                    data: {
+                        notify: true,
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    editing: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true
+                    }
+                }
+            }
+
+            _sendEvent(e) {
+
+                this.dispatchEvent(new CustomEvent('kick'), {detail: this.todo})
+
+            }
+
+            _handleSave(e) {
+                this.editing = false;
+            }
+
+            _handleEdit() {
+                this.editing = true;
+            }
+        }
+
+        window.customElements.define(MyToDoItem.is, MyToDoItem)
+
+    </script>
+
+</dom-module>
